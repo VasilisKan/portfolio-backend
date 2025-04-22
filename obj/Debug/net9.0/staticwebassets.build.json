@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "8AJDhEeaFsPO2avOIfJfMjsdql0fU7j8k6TQdC94jsY=",
+  "Source": "portfolio-backend",
+  "BasePath": "_content/portfolio-backend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
