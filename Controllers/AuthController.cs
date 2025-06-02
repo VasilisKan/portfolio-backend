@@ -23,52 +23,85 @@ public class AuthController : ControllerBase
         _jwtHelper = new JwtTokenHelper(config);
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] AppUser user)
+[HttpPost("register")]
+public async Task<IActionResult> Register([FromBody] AppUser user)
+{
+    try
     {
-        if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+        var emailExists = await _context.Users
+            .Where(u => u.Email == user.Email)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
+
+        if (emailExists != Guid.Empty)
             return BadRequest("User already exists.");
 
         user.PasswordHash = HashPassword(user.PasswordHash);
         user.Id           = Guid.NewGuid();
 
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException dbEx)
+        {
+            Console.WriteLine("Insert failed (possibly duplicate ID): " + dbEx.Message);
+            return Conflict("User registration failed due to a duplicate entry.");
+        }
 
         var jwt = _jwtHelper.GenerateToken(user);
         SetTokenCookie(jwt);
 
         return Ok(new { userId = user.Id });
     }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] AppUser login)
+    catch (Exception ex)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.Email);
-        if (user == null || !VerifyPassword(login.PasswordHash, user.PasswordHash))
-            return Unauthorized("Invalid credentials.");
-
-        var jwt = _jwtHelper.GenerateToken(user);
-        SetTokenCookie(jwt);
-
-        return Ok(new { userId = user.Id });
+        Console.WriteLine("Register failed: " + ex.Message);
+        return StatusCode(500, "Database error");
     }
+}
 
-    [Authorize]
-    [HttpGet("me")]
-    public IActionResult Me()
+[HttpPost("login")]
+public async Task<IActionResult> Login([FromBody] LoginRequest login)
+{
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.Email);
+    if (user == null || !VerifyPassword(login.Password, user.PasswordHash))
+        return Unauthorized("Invalid credentials.");    
+
+    var jwt = _jwtHelper.GenerateToken(user);
+    SetTokenCookie(jwt);
+
+    return Ok(new { userId = user.Id, isAdmin = user.IsAdmin });
+}
+
+[Authorize]
+[HttpGet("me")]
+public async Task<IActionResult> Me()
+{
+    var sub = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var user = await _context.Users.FindAsync(Guid.Parse(sub));
+    if (user == null)
+        return Unauthorized();
+
+    return Ok(new { userId = user.Id, isAdmin = user.IsAdmin });
+}
+
+[HttpPost("logout")]
+public IActionResult Logout()
+{
+    var cookieOptions = new CookieOptions
     {
-        var sub = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Ok(new { userId = sub });
-    }
-
-    [HttpPost("logout")]
-    public IActionResult Logout()
-    {
-        Response.Cookies.Delete("access_token");
-        return NoContent();
-    }
-
+        Expires = DateTimeOffset.UtcNow.AddDays(-1), 
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.None,
+        Path = "/"
+    };
+    Response.Cookies.Append("access_token", "", cookieOptions);
+    return NoContent();
+}
     private void SetTokenCookie(string token)
 {
     var cookieOpts = new CookieOptions
