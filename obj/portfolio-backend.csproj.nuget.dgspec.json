@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\v.kanellos\\Documents\\CsharpProjects\\portfolio-backend\\portfolio-backend.csproj": {}
+    "C:\\Users\\v.kanellos\\Documents\\portfolio-backend\\portfolio-backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\v.kanellos\\Documents\\CsharpProjects\\portfolio-backend\\portfolio-backend.csproj": {
+    "C:\\Users\\v.kanellos\\Documents\\portfolio-backend\\portfolio-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\v.kanellos\\Documents\\CsharpProjects\\portfolio-backend\\portfolio-backend.csproj",
+        "projectUniqueName": "C:\\Users\\v.kanellos\\Documents\\portfolio-backend\\portfolio-backend.csproj",
         "projectName": "portfolio-backend",
-        "projectPath": "C:\\Users\\v.kanellos\\Documents\\CsharpProjects\\portfolio-backend\\portfolio-backend.csproj",
+        "projectPath": "C:\\Users\\v.kanellos\\Documents\\portfolio-backend\\portfolio-backend.csproj",
         "packagesPath": "C:\\Users\\v.kanellos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\v.kanellos\\Documents\\CsharpProjects\\portfolio-backend\\obj\\",
+        "outputPath": "C:\\Users\\v.kanellos\\Documents\\portfolio-backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -83,6 +83,10 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.4, )"
@@ -98,6 +102,10 @@
             "dotenv.net": {
               "target": "Package",
               "version": "[3.2.1, )"
+            },
+            "supabase": {
+              "target": "Package",
+              "version": "[1.1.1, )"
             }
           },
           "imports": [

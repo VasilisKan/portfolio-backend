@@ -19,25 +19,29 @@ public class AuthController : ControllerBase
 
     public AuthController(AppDbContext context, IConfiguration config)
     {
-        _context   = context;
+        _context = context;
         _jwtHelper = new JwtTokenHelper(config);
     }
 
 [HttpPost("register")]
-public async Task<IActionResult> Register([FromBody] AppUser user)
+public async Task<IActionResult> Register([FromBody] RegisterUserDto userDto)
 {
     try
     {
         var emailExists = await _context.Users
-            .Where(u => u.Email == user.Email)
+            .Where(u => u.Email == userDto.Email)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
 
         if (emailExists != Guid.Empty)
             return BadRequest("User already exists.");
 
-        user.PasswordHash = HashPassword(user.PasswordHash);
-        user.Id           = Guid.NewGuid();
+        var user = new AppUser
+        {
+            Email = userDto.Email,
+            PasswordHash = HashPassword(userDto.Password),
+            IsAdmin = false  
+        };
 
         _context.Users.Add(user);
 
@@ -54,7 +58,7 @@ public async Task<IActionResult> Register([FromBody] AppUser user)
         var jwt = _jwtHelper.GenerateToken(user);
         SetTokenCookie(jwt);
 
-        return Ok(new { userId = user.Id });
+        return Ok();
     }
     catch (Exception ex)
     {
@@ -62,6 +66,8 @@ public async Task<IActionResult> Register([FromBody] AppUser user)
         return StatusCode(500, "Database error");
     }
 }
+
+
 
 [HttpPost("login")]
 public async Task<IActionResult> Login([FromBody] LoginRequest login)
@@ -73,7 +79,7 @@ public async Task<IActionResult> Login([FromBody] LoginRequest login)
     var jwt = _jwtHelper.GenerateToken(user);
     SetTokenCookie(jwt);
 
-    return Ok(new { userId = user.Id, isAdmin = user.IsAdmin });
+    return Ok(new { /*userId = user.Id, */isAdmin = user.IsAdmin });
 }
 
 [Authorize]
@@ -85,7 +91,7 @@ public async Task<IActionResult> Me()
     if (user == null)
         return Unauthorized();
 
-    return Ok(new { userId = user.Id, isAdmin = user.IsAdmin });
+    return Ok(new { /*userId = user.Id,*/ isAdmin = user.IsAdmin });
 }
 
 [HttpPost("logout")]
