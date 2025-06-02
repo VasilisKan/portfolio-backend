@@ -29,8 +29,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// === JWT‐Bearer Authentication ===
-// read and validate your JWT settings from Configuration
+
 var jwtKey = builder.Configuration["Jwt:Key"] 
              ?? throw new ArgumentException("Missing environment variable Jwt__Key");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
@@ -65,13 +64,19 @@ builder.Services
       };
   });
 
-// === Controllers + EF Core ===
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+
+// === Controllers + EF Core ===
 builder.Services.AddDbContext<AppDbContext>(opts =>
+{
     opts.UseNpgsql(
-      builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()
+    );
+    opts.EnableSensitiveDataLogging();
+    opts.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); 
+});
 
 // === Swagger (with cookieAuth scheme) ===
 builder.Services.AddEndpointsApiExplorer();
@@ -94,7 +99,6 @@ builder.Services.AddSwaggerGen(c =>
         } ] = new string[] { }
     });
 });
-
 var app = builder.Build();
 
 // apply CORS before auth
@@ -109,15 +113,18 @@ if (app.Environment.IsDevelopment())
         c.ConfigObject.AdditionalItems["withCredentials"] = true;
     });
 }
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 // health check
-app.MapGet("/", () => Results.Text("Portfolio API is running!"));
+
+// Execute the SQL script on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var sql = await File.ReadAllTextAsync("Data/SQLServer.sql");
+    await dbContext.Database.ExecuteSqlRawAsync(sql);
+}
 
 app.Run();
