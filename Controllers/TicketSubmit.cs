@@ -60,21 +60,42 @@ namespace Portfolio_Backend.Controllers
             return Ok(new { message = "Ticket submitted successfully", ticketId = ticket.Id });
         }
 
-        [Authorize]
+       [Authorize]
         [HttpGet("get")]
         public async Task<IActionResult> GetTickets()
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return Unauthorized("User ID is invalid or missing from token.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!user.IsAdmin)
+            {
+                return Forbid("You are not authorized to view tickets.");
+            }
+
             var tickets = await _context.Tickets
-                .Select(t => new
-                {
-                    t.Id,
-                    t.Title,
-                    t.Description,
-                    t.Category,
-                    t.CreatedAt,
-                    t.UpdatedAt,
-                    t.IsResolved
-                })
+                .Join(_context.Users,
+                    ticket => ticket.UserId,
+                    user => user.Id,
+                    (ticket, user) => new
+                    {
+                        ticket.Id,
+                        ticket.Title,
+                        ticket.Description,
+                        ticket.Category,
+                        ticket.CreatedAt,
+                        ticket.UpdatedAt,
+                        ticket.IsResolved,
+                        UserEmail = user.Email  
+                    })
                 .ToListAsync();
 
             return Ok(tickets);
@@ -84,13 +105,28 @@ namespace Portfolio_Backend.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateTicket(Guid id, [FromBody] PortfolioTicketsDto ticketDto)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return Unauthorized("User ID is invalid or missing from token.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!user.IsAdmin)
+            {
+                return Forbid("You are not authorized to update tickets.");
+            }
+
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound("Ticket not found.");
             }
-
-            // Optional: Check if the user owns the ticket before updating
 
             ticket.Title = ticketDto.Title;
             ticket.Description = ticketDto.Description;
@@ -107,13 +143,28 @@ namespace Portfolio_Backend.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteTicket(Guid id)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return Unauthorized("User ID is invalid or missing from token.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!user.IsAdmin)
+            {
+                return Forbid("You are not authorized to delete tickets.");
+            }
+
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound("Ticket not found.");
             }
-
-            // Optional: Check if the user owns the ticket before deleting
 
             _context.Tickets.Remove(ticket);
             await _context.SaveChangesAsync();
