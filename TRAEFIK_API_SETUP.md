@@ -1,10 +1,12 @@
 # Add api.kanellos.me to Traefik
 
-Your backend runs as **systemd** on the host (`localhost:5000`). Traefik runs in Docker and needs to reach it via `host.docker.internal`.
+Your backend runs as **systemd** on the host. Traefik runs in Docker and needs to reach it via `host.docker.internal`.
+
+**Important:** The backend must listen on `0.0.0.0:5000` (not `localhost:5000`) so Docker can connect. Set `ASPNETCORE_URLS=http://0.0.0.0:5000` in the systemd service.
 
 ## 1. Create Traefik dynamic config for the API
 
-On your server, in your **portfolio frontend** project directory:
+On your server, in your **root** project directory:
 
 ```bash
 mkdir -p traefik/dynamic
@@ -21,10 +23,6 @@ http:
       service: api-backend
       entrypoints:
         - web
-      # Uncomment after adding HTTPS (step 3):
-      # entrypoints:
-      #   - websecure
-      # certificateresolver: letsencrypt
   services:
     api-backend:
       loadBalancer:
@@ -33,9 +31,9 @@ http:
         passHostHeader: true
 ```
 
-## 2. Update your docker-compose.yml (Traefik service)
+## 2. Standalone Traefik docker-compose.yml
 
-Add the file provider, host gateway, and the dynamic config volume:
+Create a `traefik/docker-compose.yml` with the file provider, host gateway, and the dynamic config volume:
 
 ```yaml
 services:
@@ -54,7 +52,7 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     labels:
@@ -64,9 +62,6 @@ services:
       - "traefik.http.routers.traefik-dashboard.entrypoints=web"
       - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth"
       - "traefik.http.middlewares.dashboard-auth.basicauth.users=analytics:$$2y$$05$$C5o53S5OTcOJHlrxvI7JiewTLkXXqLyBnovOvWsnglcy3ph2Zp53q"
-
-  vue-app:
-    # ... keep as is ...
 ```
 
 ## 3. Add HTTPS (optional but recommended)
@@ -136,7 +131,9 @@ http:
 ## 4. Restart
 
 ```bash
-cd /path/to/portfolio-frontend
+cd /path/to/project-root/traefik
+docker compose up -d
+cd ../myPortfolio
 docker compose up -d
 ```
 
@@ -144,7 +141,6 @@ docker compose up -d
 
 ```bash
 curl -I http://api.kanellos.me/api/auth/login
-# With HTTPS:
 curl -I https://api.kanellos.me/api/auth/login
 ```
 

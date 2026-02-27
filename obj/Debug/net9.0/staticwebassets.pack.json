@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/.gitkeep",
+      "PackagePath": "staticwebassets/uploads/.gitkeep"
+    },
+    {
+      "Id": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/a5062d0425ad49409d12f1e3f3aaba72.png",
+      "PackagePath": "staticwebassets/uploads/a5062d0425ad49409d12f1e3f3aaba72.png"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.build.portfolio-backend.props",
+      "PackagePath": "build\\portfolio-backend.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.portfolio-backend.props",
+      "PackagePath": "buildMultiTargeting\\portfolio-backend.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.portfolio-backend.props",
+      "PackagePath": "buildTransitive\\portfolio-backend.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.portfolio-backend.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.portfolio-backend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

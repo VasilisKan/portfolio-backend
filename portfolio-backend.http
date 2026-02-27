@@ -3,4 +3,71 @@
 GET {{portfolio_backend_HostAddress}}/weatherforecast/
 Accept: application/json
 
+### Account create (register)
+POST {{portfolio_backend_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "YourSecurePassword"
+}
+
+### Reset password – step 1: request reset (returns token; in production you'd email it)
+POST {{portfolio_backend_HostAddress}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+### Reset password – step 2: set new password using token from step 1
+POST {{portfolio_backend_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "<paste-token-from-forgot-password-response>",
+  "newPassword": "NewSecurePassword"
+}
+
+### --- Tickets ---
+
+### Create a ticket (requires auth cookie)
+POST {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/submit
+Content-Type: application/json
+
+{
+  "title": "Bug in contact form",
+  "description": "Submit button does nothing.",
+  "category": "Bug"
+}
+
+### Reply to a ticket (requires auth; owner or admin)
+# Replace {ticketId} with a real ticket GUID
+POST {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/{ticketId}/reply
+Content-Type: application/json
+
+{
+  "message": "Thanks, we will look into it."
+}
+
+### Get replies for a ticket (requires auth; owner or admin)
+# Replace {ticketId} with a real ticket GUID
+GET {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/{ticketId}/replies
+
+### List all tickets (admin only)
+GET {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/get
+
+### Update a ticket (admin only; replace {id} with ticket GUID)
+PUT {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/update/{id}
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "description": "Updated description",
+  "category": "Support"
+}
+
+### Delete a ticket (admin only; replace {id} with ticket GUID)
+DELETE {{portfolio_backend_HostAddress}}/ticket/TicketSubmit/delete/{id}
+
 ###

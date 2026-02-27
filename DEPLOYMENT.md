@@ -111,7 +111,7 @@ WorkingDirectory=/srv/portfolio-backend
 ExecStart=/usr/bin/dotnet portfolio-backend.dll
 Restart=always
 RestartSec=10
-Environment=ASPNETCORE_URLS=http://localhost:5000
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5000
 Environment=ASPNETCORE_ENVIRONMENT=Production
 
 User=kanellos

@@ -1,12 +1,228 @@
 {
   "Version": 1,
-  "Hash": "8AJDhEeaFsPO2avOIfJfMjsdql0fU7j8k6TQdC94jsY=",
+  "Hash": "MeEa9DTzdJqcaiFa/fsQsL2YiQmx9VsFV6f2kjxO4eg=",
   "Source": "portfolio-backend",
   "BasePath": "_content/portfolio-backend",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "portfolio-backend/wwwroot",
+      "Source": "portfolio-backend",
+      "ContentRoot": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/",
+      "BasePath": "_content/portfolio-backend",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/.gitkeep",
+      "SourceId": "portfolio-backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/",
+      "BasePath": "_content/portfolio-backend",
+      "RelativePath": "uploads/#[.{fingerprint}]?.gitkeep",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5ipweew5fc",
+      "Integrity": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/.gitkeep"
+    },
+    {
+      "Identity": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/a5062d0425ad49409d12f1e3f3aaba72.png",
+      "SourceId": "portfolio-backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/",
+      "BasePath": "_content/portfolio-backend",
+      "RelativePath": "uploads/a5062d0425ad49409d12f1e3f3aaba72#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "sgp0xu8ser",
+      "Integrity": "FAaxsRXfgUnOdnAnMXVckca4ItqLRH9qW22qasqfIXQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/a5062d0425ad49409d12f1e3f3aaba72.png"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "uploads/.5ipweew5fc.gitkeep",
+      "AssetFile": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/.gitkeep",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "0"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/octet-stream"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 23 Feb 2026 22:52:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5ipweew5fc"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/.gitkeep"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/.gitkeep",
+      "AssetFile": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/.gitkeep",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "0"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/octet-stream"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 23 Feb 2026 22:52:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/a5062d0425ad49409d12f1e3f3aaba72.png",
+      "AssetFile": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/a5062d0425ad49409d12f1e3f3aaba72.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "128198"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FAaxsRXfgUnOdnAnMXVckca4ItqLRH9qW22qasqfIXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 26 Feb 2026 22:35:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FAaxsRXfgUnOdnAnMXVckca4ItqLRH9qW22qasqfIXQ="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/a5062d0425ad49409d12f1e3f3aaba72.sgp0xu8ser.png",
+      "AssetFile": "/Users/vasiliskanellos/Documents/portfolio-backend/wwwroot/uploads/a5062d0425ad49409d12f1e3f3aaba72.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "128198"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FAaxsRXfgUnOdnAnMXVckca4ItqLRH9qW22qasqfIXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 26 Feb 2026 22:35:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "sgp0xu8ser"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/a5062d0425ad49409d12f1e3f3aaba72.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FAaxsRXfgUnOdnAnMXVckca4ItqLRH9qW22qasqfIXQ="
+        }
+      ]
+    }
+  ]
 }
