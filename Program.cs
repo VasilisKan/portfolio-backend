@@ -1,28 +1,34 @@
-﻿using DotNetEnv;
+using DotNetEnv;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Portfolio_Backend.Data;
+using Portfolio_Backend.Services;
 
-Env.Load();  
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
-builder.Configuration
-       .AddEnvironmentVariables();
-
+var corsOrigins = builder.Configuration["CORS:AllowedOrigins"]
+    ?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    ?? [
+        "https://kanellos.me",
+        "https://www.kanellos.me",
+        "http://localhost:5173"
+    ];
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowDev", policy =>
     {
         policy
-          .WithOrigins(
-              "http://localhost:5173",  
-              "https://localhost:5001"   
-          )
+          .WithOrigins(corsOrigins)
           .AllowAnyHeader()
           .AllowAnyMethod()
           .AllowCredentials();
@@ -67,18 +73,34 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// === Controllers + EF Core ===
-builder.Services.AddDbContext<AppDbContext>(opts =>
+builder.Services.AddRateLimiter(options =>
 {
-    opts.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()
-    );
-    opts.EnableSensitiveDataLogging();
-    opts.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); 
+    options.AddFixedWindowLimiter("auth", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 10;
+    });
 });
 
-// === Swagger (with cookieAuth scheme) ===
+builder.Services.Configure<CloudflareOptions>(builder.Configuration.GetSection(CloudflareOptions.SectionName));
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<ICloudflareApiService, CloudflareApiService>();
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is not set.");
+
+builder.Services.AddDbContext<AppDbContext>(opts =>
+{
+    opts.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure();
+    });
+    opts.EnableSensitiveDataLogging();
+    opts.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -101,8 +123,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 var app = builder.Build();
 
-// apply CORS before auth
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 app.UseCors("AllowDev");
+app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment())
 {
@@ -114,12 +140,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-// health check
 
-// Execute the SQL script on startup
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
