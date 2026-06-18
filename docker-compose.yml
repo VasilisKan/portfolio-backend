@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      context: .
+    image: portfolio-api:latest
+    container_name: portfolio_api
+    restart: always
+    # All secrets/config (Jwt__*, ConnectionStrings__*, Smtp__*, Cloudflare__*)
+    # come from the .env file in this directory.
+    env_file:
+      - .env
+    environment:
+      # Production => Secure cookies + Swagger disabled. App listens on :8080.
+      ASPNETCORE_ENVIRONMENT: Production
+    # NPM (on the host) terminates TLS and proxies
+    # api.kanellos.me -> http://10.10.100.95:8091
+    ports:
+      - "8091:8080"
